@@ -23,18 +23,32 @@ defmodule Todo.Database do
   end
 
   def handle_cast({:store, key, data}, db_folder) do
-    file_name(db_folder, key)
-      |> File.write!(:erlang.term_to_binary(data))
-
+    spawn(fn ->
+      file_name(db_folder, key)
+        |> File.write!(:erlang.term_to_binary(data))
+    end)
     {:noreply, db_folder}
   end
 
   def handle_call({:get, key}, _, db_folder) do
-    data = case File.read(file_name(db_folder, key)) do
-      {:ok, contents} -> :erlang.binary_to_term(contents)
-      _ -> nil
-    end
-    {:reply, data, db_folder}
+    #
+    # Spawn a new reader
+    #
+    spawn(fn ->
+      data = case File.read(file_name(db_folder, key)) do
+        {:ok, contents} -> :erlang.binary_to_term(contents)
+        _ -> nil
+      end
+
+      #
+      # Responds from the spawned process
+      GenServer.reply(caller, data)
+    )
+
+    #
+    # No reply from the database
+    #
+    {:noreply, db_folder}
   end
 
   defp file_name(db_folder, key), do: "#{db_folder}/#{key}"
