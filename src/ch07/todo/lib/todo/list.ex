@@ -28,6 +28,10 @@ defmodule Todo.List do
       )
   end
 
+  def size(todo_list) do
+    HashDict.size(todo_list.entries)
+  end
+
   def update_entry(%Todo.List{entries: entries} = todo_list, entry_id, updater_fun) do
     case entries[entry_id] do
       nil -> todo_list

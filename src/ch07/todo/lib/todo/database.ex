@@ -30,7 +30,7 @@ defmodule Todo.Database do
     {:noreply, db_folder}
   end
 
-  def handle_call({:get, key}, _, db_folder) do
+  def handle_call({:get, key}, caller, db_folder) do
     #
     # Spawn a new reader
     #
@@ -43,7 +43,7 @@ defmodule Todo.Database do
       #
       # Responds from the spawned process
       GenServer.reply(caller, data)
-    )
+    end)
 
     #
     # No reply from the database
