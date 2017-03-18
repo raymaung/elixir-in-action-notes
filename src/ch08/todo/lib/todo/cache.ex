@@ -2,7 +2,7 @@ defmodule Todo.Cache do
   use GenServer
 
   def init(_) do
-    Todo.Database.start("./persist")
+    Todo.Database.start_link("./persist")
     {:ok, HashDict.new}
   end
 
@@ -20,7 +20,7 @@ defmodule Todo.Cache do
       {:ok, todo_server} ->
         {:reply, todo_server, todo_servers}
       :error ->
-        {:ok, new_server} = Todo.Server.start(todo_list_name)
+        {:ok, new_server} = Todo.Server.start_link(todo_list_name)
 
         {
           :reply,
@@ -32,7 +32,7 @@ defmodule Todo.Cache do
 end
 
 # # Start Cache
-# {:ok, cache} = Todo.Cache.start
+# {:ok, cache} = Todo.Cache.start_link
 
 # # Create Two Lists - Alice and Bob
 # Todo.Cache.server_process(cache, "Alice's list")
