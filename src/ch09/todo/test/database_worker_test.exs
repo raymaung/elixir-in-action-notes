@@ -2,7 +2,7 @@ defmodule DatabaseWorkerTest do
   use ExUnit.Case, async: false
 
   setup do
-    {:ok, worker} = Todo.DatabaseWorker.start("./test/persist")
+    {:ok, worker} = Todo.DatabaseWorker.start_link("./test/persist")
 
     on_exit(fn ->
       File.rm_rf("./test/persist")
